@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Skill Bridge Dashboard</title>
+    <!-- Load Tailwind CSS from CDN for Zero Setup/Zero Dependencies -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Use Inter font family -->
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap');
+        body {
+            font-family: 'Inter', sans-serif;
+            /* Background Color: #F8FAFC (off white) */
+            background-color: #F8FAFC; 
+        }
+        /* Custom scrollbar for activity feed */
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background-color: #cbd5e1;
+            border-radius: 3px;
+        }
+    </style>
+</head>
+<body class="antialiased min-h-screen">
+
+    <div class="flex h-screen overflow-hidden">
+        
+        <!-- Sidebar (Hidden on Mobile, Visible on LG screens) -->
+        <aside id="sidebar" class="fixed inset-y-0 left-0 z-50 w-64 bg-white shadow-xl lg:relative lg:translate-x-0 transition-transform duration-300 ease-in-out -translate-x-full">
+            <div class="p-6 h-full flex flex-col border-r border-gray-100">
+                
+                <!-- Logo & Close Button -->
+                <div class="flex items-center justify-between mb-10">
+                    <!-- Headings Color: #1E3A8A (deep blue) -->
+                    <h1 class="text-3xl font-extrabold text-[#1E3A8A] tracking-wider">
+                        Bridge
+                    </h1>
+                    <button id="close-sidebar" class="lg:hidden text-gray-500 hover:text-gray-700 p-2 rounded-full hover:bg-gray-100 transition">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                    </button>
+                </div>
+
+                <!-- Navigation Links -->
+                <nav class="space-y-2 flex-1">
+                    <!-- 1. Dashboard Link (Clickable for Presentation) -->
+                    <a href="#" class="nav-link flex items-center p-3 rounded-xl transition-all duration-200 bg-[#10B981] text-white shadow-lg shadow-[#10B981]/50" data-view="dashboard">
+                        <!-- Icon Color: #10B981 (Teal Green) -->
+                        <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>
+                        <span class="font-semibold">Dashboard</span>
+                    </a>
+                    <!-- 2. Opportunities Link (Clickable for Presentation) -->
+                    <a href="#" class="nav-link flex items-center p-3 rounded-xl transition-all duration-200 text-gray-600 hover:bg-[#10B981]/10 hover:text-[#10B981]" data-view="opportunities">
+                        <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 13.255A23.864 23.864 0 0112 15c-3.183 0-6.22-1.242-8.455-3.245M12 10V6"></path></svg>
+                        <span class="font-semibold">Opportunities</span>
+                    </a>
+                    <!-- 3. Projects & Feedback Link (Clickable for Presentation) -->
+                    <a href="#" class="nav-link flex items-center p-3 rounded-xl transition-all duration-200 text-gray-600 hover:bg-[#10B981]/10 hover:text-[#10B981]" data-view="projects">
+                        <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path></svg>
+                        <span class="font-semibold">Projects & Feedback</span>
+                    </a>
+                    <!-- 4. Profile Link (Clickable for Presentation) -->
+                    <a href="#" class="nav-link flex items-center p-3 rounded-xl transition-all duration-200 text-gray-600 hover:bg-[#10B981]/10 hover:text-[#10B981]" data-view="profile">
+                        <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
+                        <span class="font-semibold">Profile & Progress</span>
+                    </a>
+                </nav>
+
+                <!-- Footer/Help -->
+                <div class="mt-8 pt-6 border-t border-gray-100">
+                    <a href="#" class="flex items-center p-3 rounded-xl text-sm text-gray-500 hover:text-[#10B981] hover:bg-gray-100 transition">
+                        <svg class="w-4 h-4 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                        Help Center
+                    </a>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content Area -->
+        <div class="flex-1 flex flex-col overflow-y-auto">
+            
+            <!-- Header -->
+            <header class="sticky top-0 z-40 bg-white border-b border-gray-100 shadow-sm px-4 py-4 md:px-8 flex items-center justify-between">
+                
+                <!-- Mobile Menu Button & Page Title -->
+                <div class="flex items-center">
+                    <button id="open-sidebar" class="lg:hidden text-gray-600 hover:text-[#10B981] transition p-2 rounded-lg hover:bg-gray-100 mr-4">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
+                    </button>
+                    <!-- Headings Color: #1E3A8A (deep blue) -->
+                    <h2 id="page-title" class="text-2xl font-bold text-[#1E3A8A]">Dashboard</h2>
+                </div>
+
+                <!-- User Profile -->
+                <div class="flex items-center space-x-4">
+                    <span class="text-sm font-medium text-gray-700 hidden sm:block">Welcome back, User!</span>
+                    <!-- User Initial with Accent BG/Deep Blue Text -->
+                    <div class="w-10 h-10 rounded-full bg-[#10B981]/20 flex items-center justify-center text-[#1E3A8A] font-bold text-lg">U</div>
+                </div>
+            </header>
+
+            <!-- Dynamic Content Wrapper -->
+            <main id="content-wrapper" class="p-4 md:p-8 flex-1">
+                
+                <!-- CONTENT FOR DIFFERENT VIEWS WILL BE RENDERED HERE -->
+                
+            </main>
+        </div>
+    </div>
+
+    <!-- JavaScript for Navigation and Interactivity -->
+    <script>
+        // --- 1. MOCK DATA ---
+        const MOCK_DATA = {
+            stats: [
+                { title: "Skills Added", value: "8", color: "text-[#10B981]", icon: '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>' },
+                { title: "Opportunities Matched", value: "14", color: "text-green-600", icon: '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path>' },
+                { title: "Pending Feedback", value: "2", color: "text-orange-600", icon: '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path>' },
+            ],
+            opportunities: [
+                { title: "Frontend Internship (React/TS)", skills: ["React", "TypeScript", "Tailwind"], match: "High", link: "#" },
+                { title: "Python Data Engineer (TensorFlow)", skills: ["Python", "Machine Learning", "Cloud"], match: "Medium", link: "#" },
+                { title: "Mobile UI/UX Designer", skills: ["Figma", "Sketch", "Prototyping"], match: "Medium", link: "#" },
+                { title: "Technical Writer (API Documentation)", skills: ["Documentation", "Markdown", "APIs"], match: "Low", link: "#" },
+            ],
+            submittedProjects: [
+                { name: "E-commerce Redesign", status: "Feedback Received", date: "2 days ago" },
+                { name: "Skill Match Algorithm v2", status: "Awaiting Review", date: "1 week ago" },
+                { name: "Portfolio Website", status: "In Progress", date: "3 weeks ago" },
+            ],
+            mentorshipRequests: [
+                { mentor: "Dr. Elara Vance", topic: "Advanced Backend Systems (Node.js)", status: "Pending" },
+                { mentor: "Mr. Kenji Sato", topic: "Technical Interview Prep", status: "Scheduled" },
+            ],
+            profile: {
+                progress: {
+                    frontend: 75,
+                    backend: 50,
+                    design: 30
+                },
+                certificates: ["Data Structures Certification", "Cloud Practitioner Badge"],
+            }
+        };
+
+        // --- 2. TEMPLATES ---
+
+        const DashboardView = () => `
+            <!-- Headings Color: #1E3A8A (deep blue) -->
+            <h1 class="text-3xl font-bold text-[#1E3A8A] mb-6">Overview</h1>
+            
+            <!-- Stat Cards -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
+                ${MOCK_DATA.stats.map(stat => `
+                    <div class="bg-white p-5 rounded-xl shadow-lg transition duration-300 hover:shadow-xl border border-gray-100">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-sm font-medium text-gray-500">${stat.title}</p>
+                                <p class="text-3xl font-bold text-gray-800 mt-1">${stat.value}</p>
+                            </div>
+                            <!-- Accent Color for Icon BG and Text -->
+                            <div class="p-3 rounded-full bg-[#10B981]/20">
+                                <svg class="w-6 h-6 ${stat.color}" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">${stat.icon}</svg>
+                            </div>
+                        </div>
+                    </div>
+                `).join('')}
+            </div>
+
+            <!-- Main Dashboard Content -->
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+
+                <!-- Skill Input (1/3 width) -->
+                <div class="lg:col-span-1 bg-white p-6 rounded-xl shadow-lg border border-gray-100 h-fit">
+                    <!-- Headings Color: #1E3A8A (deep blue) -->
+                    <h2 class="text-xl font-semibold text-[#1E3A8A] mb-4">1. Update Your Skill Sets</h2>
+                    <p class="text-sm text-gray-500 mb-4">Adding or updating skills automatically improves your match quality.</p>
+                    <form onsubmit="handleSkillSubmission(event)">
+                        <!-- Accent Color for Focus Rings -->
+                        <textarea id="skill-input" rows="4" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-[#10B981] focus:border-[#10B981] text-sm" placeholder="e.g., Python, SQL, Project Management, Figma"></textarea>
+                        <!-- Button now uses hover:opacity-80 for cleaner interaction -->
+                        <button type="submit" class="w-full mt-3 px-4 py-2 bg-[#10B981] text-white font-semibold rounded-lg shadow-md hover:opacity-80 transition duration-200">
+                            Submit Skills
+                        </button>
+                    </form>
+                </div>
+
+                <!-- Recommended Opportunities (2/3 width) -->
+                <div class="lg:col-span-2 bg-white p-6 rounded-xl shadow-lg border border-gray-100">
+                    <!-- Headings Color: #1E3A8A (deep blue) -->
+                    <h2 class="text-xl font-semibold text-[#1E3A8A] mb-4">2. Top Recommended Opportunities</h2>
+                    <div class="space-y-4 custom-scrollbar max-h-96">
+                        ${MOCK_DATA.opportunities.map(opp => `
+                            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center p-4 border border-gray-100 rounded-xl hover:bg-[#10B981]/10 transition duration-150">
+                                <div>
+                                    <p class="text-base font-semibold text-gray-800">${opp.title}</p>
+                                    <div class="mt-1 flex flex-wrap gap-2">
+                                        ${opp.skills.map(skill => `<span class="text-xs px-2 py-0.5 bg-gray-200 text-gray-700 rounded-full">${skill}</span>`).join('')}
+                                    </div>
+                                </div>
+                                <div class="mt-3 sm:mt-0 flex items-center space-x-3">
+                                    <span class="text-sm font-medium px-3 py-1 rounded-full ${opp.match === 'High' ? 'bg-green-100 text-green-700' : opp.match === 'Medium' ? 'bg-yellow-100 text-yellow-700' : 'bg-red-100 text-red-700'}">
+                                        Match: ${opp.match}
+                                    </span>
+                                    <!-- Accent Color for Link Text -->
+                                    <a href="${opp.link}" class="text-sm text-[#10B981] font-medium hover:underline">Apply &rarr;</a>
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+                    <!-- View All Opportunities button (Clickable for Presentation) -->
+                    <button class="mt-4 w-full text-center text-[#10B981] font-medium text-sm hover:underline" onclick="navigateTo('opportunities')">
+                        View All Opportunities
+                    </button>
+                </div>
+            </div>
+        `;
+
+        const OpportunitiesView = () => `
+            <!-- Headings Color: #1E3A8A (deep blue) -->
+            <h1 class="text-3xl font-bold text-[#1E3A8A] mb-6">Opportunities & Jobs</h1>
+            <div class="bg-white p-6 rounded-xl shadow-lg border border-gray-100">
+                <!-- Headings Color: #1E3A8A (deep blue) -->
+                <h2 class="text-2xl font-semibold text-[#1E3A8A] mb-4">Recommended for You</h2>
+                <p class="text-gray-500 mb-6">Based on your skills (Python, SQL, React), here are the latest openings.</p>
+                <div class="space-y-4">
+                    ${MOCK_DATA.opportunities.map(opp => `
+                        <div class="flex flex-col md:flex-row justify-between items-start md:items-center p-4 border-b border-gray-100 last:border-b-0">
+                            <div class="flex-1">
+                                <!-- Accent Color for Opportunity Title -->
+                                <p class="text-lg font-semibold text-[#10B981]">${opp.title}</p>
+                                <div class="mt-1 flex flex-wrap gap-2">
+                                    ${opp.skills.map(skill => `<span class="text-xs px-2 py-0.5 bg-gray-200 text-gray-700 rounded-full">${skill}</span>`).join('')}
+                                </div>
+                            </div>
+                            <!-- Accent Color for Button BG -->
+                            <button class="mt-2 md:mt-0 px-4 py-1.5 bg-[#10B981] text-white text-sm font-medium rounded-lg hover:opacity-80 transition">
+                                View Details
+                            </button>
+                        </div>
+                    `).join('')}
+                </div>
+            </div>
+        `;
+
+        const ProjectsView = () => `
+            <!-- Headings Color: #1E3A8A (deep blue) -->
+            <h1 class="text-3xl font-bold text-[#1E3A8A] mb-6">Project Submission & Feedback</h1>
+            
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <!-- Submitted Projects -->
+                <div class="bg-white p-6 rounded-xl shadow-lg border border-gray-100">
+                    <!-- Headings Color: #1E3A8A (deep blue) -->
+                    <h2 class="text-2xl font-semibold text-[#1E3A8A] mb-4">Submitted Work</h2>
+                    <p class="text-gray-500 mb-4">Review the status of your project submissions.</p>
+                    <div class="space-y-4">
+                        ${MOCK_DATA.submittedProjects.map(p => `
+                            <div class="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
+                                <span class="font-medium text-gray-800">${p.name}</span>
+                                <span class="text-sm font-medium ${p.status.includes('Feedback') ? 'text-green-600' : p.status.includes('Review') ? 'text-orange-600' : 'text-gray-500'}">${p.status}</span>
+                            </div>
+                        `).join('')}
+                    </div>
+                    <button class="mt-6 w-full px-4 py-2 bg-green-500 text-white font-semibold rounded-lg hover:bg-green-600 transition">
+                        Submit New Work
+                    </button>
+                </div>
+
+                <!-- Mentorship Requests / Feedback -->
+                <div class="bg-white p-6 rounded-xl shadow-lg border border-gray-100">
+                    <!-- Headings Color: #1E3A8A (deep blue) -->
+                    <h2 class="text-2xl font-semibold text-[#1E3A8A] mb-4">Mentorship & Feedback</h2>
+                    <div class="space-y-4">
+                        <!-- Headings Color: #1E3A8A (deep blue) -->
+                        <h3 class="font-semibold text-[#1E3A8A] pt-2 border-t border-[#10B981]/20">Mentorship Requests</h3>
+                        ${MOCK_DATA.mentorshipRequests.map(m => `
+                            <div class="flex justify-between items-center p-3 border-b border-gray-100">
+                                <div class="flex flex-col">
+                                    <span class="font-medium text-gray-800">${m.mentor}</span>
+                                    <span class="text-sm text-gray-500">${m.topic}</span>
+                                </div>
+                                <span class="text-sm ${m.status === 'Scheduled' ? 'text-green-600' : 'text-orange-600'}">${m.status}</span>
+                            </div>
+                        `).join('')}
+                        <!-- Accent Color for Button Border/Text/Hover -->
+                        <button class="w-full px-4 py-2 mt-4 text-[#10B981] border border-[#10B981]/50 rounded-lg hover:bg-[#10B981]/10 transition">
+                            Request New Mentor
+                        </button>
+                    </div>
+                </div>
+            </div>
+        `;
+
+        const ProfileView = () => `
+            <!-- Headings Color: #1E3A8A (deep blue) -->
+            <h1 class="text-3xl font-bold text-[#1E3A8A] mb-6">Profile & Skill Progress</h1>
+            
+            <div class="bg-white p-6 rounded-xl shadow-lg border border-gray-100">
+                <!-- Headings Color: #1E3A8A (deep blue) -->
+                <h2 class="text-2xl font-semibold text-[#1E3A8A] mb-6">Skill Progression Tracker</h2>
+                <div class="space-y-6">
+                    ${Object.entries(MOCK_DATA.profile.progress).map(([skill, percent]) => `
+                        <div>
+                            <div class="flex justify-between mb-1">
+                                <span class="text-base font-medium text-gray-900 capitalize">${skill}</span>
+                                <!-- Accent Color for Percentage Text -->
+                                <span class="text-sm font-semibold text-[#10B981]">${percent}%</span>
+                            </div>
+                            <div class="w-full bg-gray-200 rounded-full h-2.5">
+                                <!-- Accent Color for Progress Bar Fill -->
+                                <div class="bg-[#10B981] h-2.5 rounded-full transition-all duration-700 ease-out" style="width: ${percent}%"></div>
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+                <!-- Certificates -->
+                <div class="bg-white p-6 rounded-xl shadow-lg border border-gray-100">
+                    <!-- Headings Color: #1E3A8A (deep blue) -->
+                    <h2 class="text-xl font-semibold text-[#1E3A8A] mb-4">Certificates & Badges</h2>
+                    <ul class="space-y-2 list-disc list-inside text-gray-700">
+                        ${MOCK_DATA.profile.certificates.map(cert => `<li>${cert}</li>`).join('')}
+                    </ul>
+                </div>
+
+                <!-- Portfolio Integration -->
+                <div class="bg-white p-6 rounded-xl shadow-lg border border-gray-100">
+                    <!-- Headings Color: #1E3A8A (deep blue) -->
+                    <h2 class="text-xl font-semibold text-[#1E3A8A] mb-4">Portfolio Integration</h2>
+                    <p class="text-gray-500 mb-4">Connect your GitHub, Behance, or personal site to showcase your work.</p>
+                    <button class="w-full px-4 py-2 bg-gray-800 text-white font-semibold rounded-lg hover:bg-gray-700 transition">
+                        Connect Portfolio
+                    </button>
+                </div>
+            </div>
+        `;
+
+
+        // --- 3. CORE LOGIC (Navigation & Events) ---
+
+        const contentWrapper = document.getElementById('content-wrapper');
+        const pageTitle = document.getElementById('page-title');
+        const navLinks = document.querySelectorAll('.nav-link');
+        const sidebar = document.getElementById('sidebar');
+        const openSidebarBtn = document.getElementById('open-sidebar');
+        const closeSidebarBtn = document.getElementById('close-sidebar');
+
+        const views = {
+            'dashboard': DashboardView,
+            'opportunities': OpportunitiesView,
+            'projects': ProjectsView,
+            'profile': ProfileView
+        };
+
+        // FIX: Explicitly attach to window object so inline 'onclick' events can find the function.
+        window.navigateTo = function(viewName) {
+            // 1. Update URL Hash (for simple "routing")
+            window.location.hash = viewName;
+            
+            // 2. Render content
+            contentWrapper.innerHTML = views[viewName]();
+            
+            // 3. Update Title
+            pageTitle.textContent = viewName.charAt(0).toUpperCase() + viewName.slice(1);
+
+            // 4. Update Active Link Styling
+            navLinks.forEach(link => {
+                // Remove previous active styles
+                link.classList.remove('bg-[#10B981]', 'text-white', 'shadow-lg', 'shadow-[#10B981]/50');
+                // Re-apply inactive/hover styles
+                link.classList.add('text-gray-600', 'hover:bg-[#10B981]/10', 'hover:text-[#10B981]');
+                
+                if (link.dataset.view === viewName) {
+                    // Apply new active styles
+                    link.classList.add('bg-[#10B981]', 'text-white', 'shadow-lg', 'shadow-[#10B981]/50');
+                    // Remove hover styles that conflict with active state
+                    link.classList.remove('text-gray-600', 'hover:bg-[#10B981]/10', 'hover:text-[#10B981]');
+                }
+            });
+
+            // 5. Close sidebar on mobile
+            if (window.innerWidth < 1024) {
+                sidebar.classList.add('-translate-x-full');
+            }
+        }
+
+        // Skill Submission Handler (Pure JS) - already correctly attached to window
+        window.handleSkillSubmission = function(event) {
+            event.preventDefault();
+            const input = document.getElementById('skill-input');
+            const skills = input.value.trim();
+
+            if (skills) {
+                const submitButton = event.target.querySelector('button');
+                
+                // Save original classes for reset
+                const originalClasses = ['bg-[#10B981]', 'shadow-md', 'hover:opacity-80'];
+                
+                // Apply success styles
+                submitButton.textContent = 'Skills Submitted! 🎉';
+                submitButton.classList.remove(...originalClasses); 
+                submitButton.classList.add('bg-green-600', 'hover:bg-green-700', 'shadow-lg');
+                
+                setTimeout(() => {
+                    input.value = '';
+                    submitButton.textContent = 'Submit Skills';
+                    
+                    // Reset to original styles
+                    submitButton.classList.remove('bg-green-600', 'hover:bg-green-700', 'shadow-lg');
+                    submitButton.classList.add(...originalClasses); 
+                    
+                    window.navigateTo('opportunities'); // Use window.navigateTo here too
+                }, 1500);
+                
+                console.log('New skills submitted:', skills);
+            }
+        }
+
+        // Event listeners for navigation and mobile sidebar
+        navLinks.forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                window.navigateTo(e.currentTarget.dataset.view);
+            });
+        });
+
+        // Mobile sidebar toggles
+        openSidebarBtn.addEventListener('click', () => {
+            sidebar.classList.remove('-translate-x-full');
+        });
+
+        closeSidebarBtn.addEventListener('click', () => {
+            sidebar.classList.add('-translate-x-full');
+        });
+        
+        // Initial load: check hash or default to dashboard
+        document.addEventListener('DOMContentLoaded', () => {
+            const initialView = window.location.hash.substring(1) || 'dashboard';
+            window.navigateTo(initialView);
+        });
+
+    </script>
+
+</body>
+</html>
